@@ -46,9 +46,22 @@ export default function PriceChart({ region }: { region: string }) {
     gold: p.priceGold,
   }));
 
+  const first = points[0]?.priceGold;
+  const last = points[points.length - 1]?.priceGold;
+
+  const change = first && last ? ((last - first) / first) * 100 : null;
+
   return (
     <>
-      <div className="mt-6 flex gap-2">
+      <div className="mt-2 flex gap-2">
+        {change !== null && (
+          <p
+            className={`mt-6 text-sm font-medium ${change >= 0 ? "text-emerald-400" : "text-red-400"}`}
+          >
+            {change >= 0 ? "▲" : "▼"} {Math.abs(change).toFixed(2)}% nas últimas{" "}
+            {range}
+          </p>
+        )}
         {RANGES.map((r) => (
           <button
             key={r}
