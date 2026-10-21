@@ -48,12 +48,12 @@ export default function PriceChart({ region }: { region: string }) {
 
   return (
     <>
-      <div>
+      <div className="mt-6 flex gap-2">
         {RANGES.map((r) => (
           <button
             key={r}
             onClick={() => setRange(r)}
-            style={{ fontWeight: r === range ? "bold" : "normal" }}
+            className={`rounded=lg px-3 py-1 text-sm font-medium transition ${r === range ? "bg-amber-400 text-zinc-900" : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"}`}
           >
             {r}
           </button>
@@ -62,10 +62,26 @@ export default function PriceChart({ region }: { region: string }) {
       <div style={{ width: "100%", height: 300 }}>
         <ResponsiveContainer>
           <LineChart data={chartData}>
-            <XAxis dataKey="hora" />
-            <YAxis domain={["auto", "auto"]} />
-            <Tooltip />
-            <Line type="monotone" dataKey="gold" dot={false} />
+            <XAxis dataKey="hora" stroke="#71717a" tick={{ fontSize: 12 }} />
+            <YAxis
+              domain={["auto", "auto"]}
+              stroke="#71717a"
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#1818b",
+                border: "1px solid #3f3f46",
+                borderRadius: 8,
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="gold"
+              stroke="#fbbf24"
+              strokeWidth={2}
+              dot={false}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
