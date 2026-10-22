@@ -10,6 +10,18 @@ type TokenData = {
   lastUpdated: string;
 };
 
+function timeAgo(iso: string) {
+  const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+
+  if (minutes < 1) return "agora mesmo";
+  if (minutes < 60) return `há ${minutes} min`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `há ${hours} h`;
+
+  return `há ${Math.floor(hours / 24)} d`;
+}
+
 export default function TokenPrice() {
   const [region, setRegion] = useState("us");
   const [data, setData] = useState<TokenData | null>(null);
@@ -52,6 +64,11 @@ export default function TokenPrice() {
             ? `${data.priceGold.toLocaleString("pt-BR")} gold`
             : "Carregando..."}
       </p>
+      {data && (
+        <p className="mt-1 text-xs text-zinc-500">
+          Atualizado {timeAgo(data.lastUpdated)}
+        </p>
+      )}
       <PriceChart region={region} />
     </div>
   );
