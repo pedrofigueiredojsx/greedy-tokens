@@ -28,16 +28,32 @@ export default function TokenPrice() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    let active = true;
+
+    async function load() {
+      try {
+        const res = await fetch(`/api/token?region=${region}`);
+        if (!res.ok) throw new Error("Falha ao buscar o token");
+        const json = await res.json();
+
+        if (active) {
+          setData(json);
+          setError(false);
+        }
+      } catch {
+        if (active) setError(true);
+      }
+    }
     setData(null);
     setError(false);
+    load();
 
-    fetch(`/api/token?region=${region}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Falha ao buscar o token");
-        return res.json();
-      })
-      .then(setData)
-      .catch(() => setError(true));
+    const id = setInterval(load, 5 * 60 * 1000);
+
+    return () => {
+      active = false;
+      clearInterval(id);
+    };
   }, [region]);
 
   return (
