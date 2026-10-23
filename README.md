@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🪙 Greedy Tokens
 
-## Getting Started
+Dashboard que acompanha o preço do **WoW Token** em tempo real, por região, com histórico de preços.
 
-First, run the development server:
+🔗 **Demo:** https://seu-projeto.vercel.app
+
+![Screenshot](./public/screenshot.png)
+
+## Funcionalidades
+
+- Preço atual do token em gold, por região (US, EU, KR, TW)
+- Gráfico histórico com períodos de 24h, 7d e 30d
+- Variação percentual no período
+- Indicador de última atualização
+- Coleta automática do preço a cada ~20 minutos
+
+## Stack
+
+- **Front-end:** Next.js (App Router), React, TypeScript, Tailwind CSS, Recharts
+- **Back-end:** rotas de API do Next.js
+- **Banco:** PostgreSQL (Neon)
+- **Integração:** API oficial da Blizzard (OAuth client credentials)
+- **Deploy:** Vercel + agendador externo (cron-job.org)
+
+## Como funciona
+
+```
+Agendador (a cada 20 min)
+  → GET /api/collect (protegida por segredo)
+  → busca o preço nas 4 regiões na API da Blizzard
+  → grava no Postgres (sem duplicar)
+
+Navegador
+  → GET /api/token    (preço atual)
+  → GET /api/history  (histórico por período)
+```
+
+## Rodando localmente
+
+```bash
+git clone https://github.com/seu-usuario/greedy-tokens.git
+cd greedy-tokens
+npm install
+```
+
+Crie um `.env.local` com:
+
+```
+BLIZZARD_CLIENT_ID=
+BLIZZARD_CLIENT_SECRET=
+DATABASE_URL=
+CRON_SECRET=
+```
+
+Crie a tabela no Postgres:
+
+```sql
+CREATE TABLE token_prices (
+  id SERIAL PRIMARY KEY,
+  region TEXT NOT NULL,
+  price_gold INTEGER NOT NULL,
+  blizzard_updated_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (region, blizzard_updated_at)
+);
+```
+
+Depois:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Decisões técnicas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Cache do access token** em memória, renovado antes de expirar.
+- **Validação no servidor** de região e período, com type guards em TypeScript.
+- **`UNIQUE` + `ON CONFLICT DO NOTHING`** evitam registros duplicados.
+- **Agendador externo**, porque o cron do plano gratuito da Vercel só roda uma vez por dia.
