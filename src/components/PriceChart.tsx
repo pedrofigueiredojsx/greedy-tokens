@@ -51,6 +51,10 @@ export default function PriceChart({ region }: { region: string }) {
 
   const change = first && last ? ((last - first) / first) * 100 : null;
 
+  const prices = points.map((p) => p.priceGold);
+  const min = prices.length > 0 ? Math.min(...prices) : null;
+  const max = prices.length > 0 ? Math.max(...prices) : null;
+
   return (
     <>
       <div className="mt-2 flex gap-2">
@@ -62,6 +66,7 @@ export default function PriceChart({ region }: { region: string }) {
             {range}
           </p>
         )}
+
         {RANGES.map((r) => (
           <button
             key={r}
@@ -98,6 +103,23 @@ export default function PriceChart({ region }: { region: string }) {
           </LineChart>
         </ResponsiveContainer>
       </div>
+
+      {min !== null && max !== null && (
+        <div className="mt-4 flex gap-6 text-sm text-zinc-400">
+          <span>
+            Mínima:{" "}
+            <strong className="text-zinc-100">
+              {min.toLocaleString("pt-BR")} gold
+            </strong>
+          </span>
+          <span>
+            Máxima:{" "}
+            <strong className="text-zinc-100">
+              {max.toLocaleString("pt-BR")} gold
+            </strong>
+          </span>
+        </div>
+      )}
     </>
   );
 }
