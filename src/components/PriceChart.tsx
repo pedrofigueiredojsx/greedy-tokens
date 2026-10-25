@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { percentChange, minMax } from "@/lib/stats";
 
 const RANGES = ["24h", "7d", "30d"];
 type Range = (typeof RANGES)[number];
@@ -49,11 +50,12 @@ export default function PriceChart({ region }: { region: string }) {
   const first = points[0]?.priceGold;
   const last = points[points.length - 1]?.priceGold;
 
-  const change = first && last ? ((last - first) / first) * 100 : null;
-
   const prices = points.map((p) => p.priceGold);
-  const min = prices.length > 0 ? Math.min(...prices) : null;
-  const max = prices.length > 0 ? Math.max(...prices) : null;
+  const change =
+    prices.length > 0
+      ? percentChange(prices[0], prices[prices.length - 1])
+      : null;
+  const limits = minMax(prices);
 
   return (
     <>
@@ -104,18 +106,18 @@ export default function PriceChart({ region }: { region: string }) {
         </ResponsiveContainer>
       </div>
 
-      {min !== null && max !== null && (
+      {limits && (
         <div className="mt-4 flex gap-6 text-sm text-zinc-400">
           <span>
             Mínima:{" "}
             <strong className="text-zinc-100">
-              {min.toLocaleString("pt-BR")} gold
+              {limits.min.toLocaleString("pt-BR")} gold
             </strong>
           </span>
           <span>
             Máxima:{" "}
             <strong className="text-zinc-100">
-              {max.toLocaleString("pt-BR")} gold
+              {limits.max.toLocaleString("pt-BR")} gold
             </strong>
           </span>
         </div>
