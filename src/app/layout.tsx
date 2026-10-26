@@ -13,8 +13,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://greedy-tokens.vercel.app/"),
   title: "Greedy Tokens",
-  description: "Acompanhe o preço do WoW Token por região",
+  description:
+    "Acompanhe o preço do WoW Token por região, com histórico e variação",
+  openGraph: {
+    title: "Greedy Tokens",
+    description:
+      "Acompanhe o preço do WoW Token por região, com histórico e variação",
+    type: "website",
+    locale: "pt_BR",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
