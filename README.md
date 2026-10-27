@@ -1,5 +1,7 @@
 # 🪙 Greedy Tokens
 
+![CI](https://github.com/pedrofigueiredojsx/greedy-tokens/actions/workflows/ci.yml/badge.svg)
+
 Dashboard que acompanha o preço do **WoW Token** em tempo real, por região, com histórico de preços.
 
 🔗 **Demo:** https://seu-projeto.vercel.app
