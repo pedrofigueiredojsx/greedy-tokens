@@ -30,5 +30,9 @@ describe("percentChange", () => {
     it("retorna null para lista vazia", () => {
       expect(minMax([])).toBeNull();
     });
+
+    it("retorna null para lista vazia", () => {
+      expect(minMax([0])).toBeFalsy();
+    });
   });
 });
