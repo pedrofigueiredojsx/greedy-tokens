@@ -17,7 +17,7 @@ function isRange(value: string): value is Range {
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const region = params.get("region") ?? "us";
-  const range = params.get("range") ?? "24";
+  const range = params.get("range") ?? "24h";
 
   if (!isRegion(region)) {
     return NextResponse.json(
