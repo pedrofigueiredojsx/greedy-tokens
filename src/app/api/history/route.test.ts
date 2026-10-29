@@ -17,7 +17,7 @@ describe("GET /api/history", () => {
     vi.mocked(getHistory).mockReset();
   });
 
-  it("retorna 400 para região inválida", async () => {
+  it("retorn 400 para região inválida", async () => {
     const res = await GET(makeRequest("?region=banana"));
     expect(res.status).toBe(400);
   });
@@ -37,7 +37,7 @@ describe("GET /api/history", () => {
   });
 
   it("converte 7d em 168 horas e devolve os pontos", async () => {
-    const points = [{ priceGold: 300000, at: "2026-10-28T12:00:00.000Z" }];
+    const points = [{ priceGold: 300000, at: "2026-10-28T12:00:00.000z" }];
     vi.mocked(getHistory).mockResolvedValue(points);
 
     const res = await GET(makeRequest("?region=eu&range=7d"));
