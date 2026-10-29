@@ -3,10 +3,10 @@ import { REGIONS, getTokenPrice } from "@/lib/blizzard";
 import { savePrice } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
+  const secret = process.env.CRON_SECRET;
   const auth = request.headers.get("authorization");
-  const expected = `Bearer ${process.env.CRON_SECRET}`;
 
-  if (auth !== expected) {
+  if (!secret || auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   }
 
